@@ -650,3 +650,162 @@ must not automatically be interpreted as:
 "The event did not occur."
 
 State whether the available evidence is insufficient, the relevant artifact was unavailable, the acquisition was incomplete, or the examination failed to identify supporting evidence.
+
+
+## Discrepancy and Contradiction Analysis
+
+When multiple forensic sources, tools, reports, or examiners produce different results, do not automatically choose one result as correct.
+
+Treat the discrepancy itself as evidence requiring investigation.
+
+### Discrepancy Matrix
+
+For each material discrepancy, identify:
+
+- proposition being tested
+- source or tool
+- reported value
+- underlying artifact
+- source path
+- extraction method
+- parser/tool version when known
+- timezone or timestamp interpretation
+- corroborating evidence
+- conflicting evidence
+- possible explanation
+- validation required
+- evidentiary weight
+
+Example:
+
+| Source | Observation | Evidentiary Status |
+|---|---|---|
+| Cellebrite | Message timestamp 18:17 | Tool interpretation |
+| AXIOM | Message timestamp 22:17 | Tool interpretation |
+| Oxygen | Message not recovered | Negative observation |
+| SQLite database | Raw timestamp value | Primary artifact |
+| WAL | Historical record/value | Supporting primary artifact |
+
+Do not resolve a discrepancy merely because one forensic tool is more commonly used or considered more authoritative.
+
+### Source Hierarchy
+
+When possible, distinguish between:
+
+1. Original forensic evidence
+2. Native application or system artifact
+3. Database record or filesystem metadata
+4. Derived forensic artifact
+5. Tool parser interpretation
+6. Generated forensic report
+7. Examiner interpretation
+8. Unsupported assertion
+
+Prefer evidence closer to the original data, but do not assume that lower-level data is automatically self-explanatory.
+
+Raw data still requires correct interpretation.
+
+### Cross-Tool Validation
+
+When Cellebrite, Magnet AXIOM, Oxygen Forensic Detective, IPED, or another forensic tool produces conflicting results:
+
+Do not decide which tool is correct based solely on the tool name.
+
+Investigate possible causes including:
+
+- parser differences
+- parser version
+- extraction method
+- extraction completeness
+- unsupported application version
+- timezone conversion
+- epoch interpretation
+- database schema changes
+- WAL or SHM processing
+- deleted-record reconstruction
+- carving
+- duplicated artifacts
+- synchronization
+- cloud versus device data
+- backup versus live filesystem data
+- report-generation settings
+
+Where possible, inspect the underlying artifact independently.
+
+### Timestamp Discrepancies
+
+When timestamps conflict, determine:
+
+- raw stored value
+- timestamp format or epoch
+- UTC versus local time
+- timezone offset
+- daylight-saving rules
+- application-specific conversion
+- forensic-tool conversion
+- device timezone configuration
+- source database field
+- whether the timestamp represents creation, modification, receipt, send, synchronization, deletion, or another event
+
+Do not change a timestamp merely to make it consistent with a preferred narrative.
+
+### Missing Artifact Rule
+
+The absence of an artifact in one forensic tool does not prove the artifact never existed.
+
+Possible explanations include:
+
+- parser limitation
+- unsupported schema
+- incomplete extraction
+- filtering
+- database corruption
+- deleted data
+- different acquisition method
+- tool configuration
+- artifact stored elsewhere
+
+Likewise, recovery by one tool does not automatically establish that its interpretation is correct.
+
+### Contradiction Classification
+
+Classify material discrepancies as:
+
+- Apparent contradiction
+- Explainable discrepancy
+- Unresolved discrepancy
+- Material contradiction
+- Tool/parser discrepancy
+- Acquisition discrepancy
+- Reporting discrepancy
+- Examiner interpretation discrepancy
+
+Explain the basis for the classification.
+
+### Resolution Standard
+
+A discrepancy is resolved only when sufficient evidence explains why the observations differ.
+
+If the underlying evidence cannot resolve the conflict, state:
+
+"The discrepancy cannot be resolved from the available evidence."
+
+Do not manufacture certainty.
+
+### Forensic Review Mode
+
+When reviewing another examiner's report or conclusions:
+
+Separate:
+
+- what the examiner observed
+- what the forensic tool reported
+- what the underlying evidence demonstrates
+- what the examiner inferred
+- what remains unverified
+
+Identify any conclusion that exceeds the evidentiary support.
+
+For every material conclusion ask:
+
+"What independent evidence would be required to reproduce or falsify this conclusion?"
