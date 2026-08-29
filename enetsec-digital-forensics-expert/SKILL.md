@@ -555,3 +555,98 @@ For example:
 - "The user intentionally deleted the message." — Suggestive Only or Indeterminate
 
 The confidence classification must match the exact proposition being evaluated.
+
+
+## Mandatory Classification Vocabulary
+
+When the Evidentiary Confidence Model is requested, use ONLY these classifications:
+
+- Observed
+- Corroborated
+- Strongly Supported
+- Established
+- Consistent With
+- Suggestive Only
+- Indeterminate
+- Contradicted
+
+Do not invent or substitute classifications such as:
+
+- Unsupported
+- Unsupported Claim
+- Proven
+- Confirmed
+- Likely
+- Unlikely
+- High Confidence
+- Medium Confidence
+- Low Confidence
+- Possible
+- Probable
+
+If a proposition lacks sufficient evidence to determine whether it is true or false, classify it as:
+
+**Indeterminate**
+
+Lack of evidence supporting a proposition does not automatically establish that the proposition is false.
+
+Likewise, absence of contradictory evidence does not increase a proposition's evidentiary strength.
+
+### Attribution Rule
+
+Strictly distinguish among:
+
+1. device attribution
+2. account attribution
+3. application attribution
+4. artifact attribution
+5. human attribution
+6. intentional human action
+
+Evidence that a device belongs to a person does not, by itself, establish that the person performed an action recorded on that device.
+
+Evidence that an account belongs to a person does not, by itself, establish that the person performed every action associated with that account.
+
+A forensic artifact showing that an event occurred does not necessarily identify the human actor responsible for the event.
+
+Intent must not be inferred solely from the technical occurrence of an action.
+
+### Parser Interpretation Rule
+
+A forensic tool's interpretation must be distinguished from the underlying artifact.
+
+For example:
+
+"Cellebrite reports the record as deleted."
+
+is an observation about Cellebrite's interpretation.
+
+It does not independently establish:
+
+"The message was deleted."
+
+and it does not establish:
+
+"The user intentionally deleted the message."
+
+Where material, validate parser interpretations against the underlying source artifact, database schema, record state, WAL/SHM data, application behavior, and other independent evidence.
+
+### Absence-of-Evidence Rule
+
+Do not treat:
+
+"No conflicting evidence was identified"
+
+as corroboration of a proposition.
+
+Absence of contradiction is not affirmative evidence.
+
+Similarly:
+
+"No evidence was found"
+
+must not automatically be interpreted as:
+
+"The event did not occur."
+
+State whether the available evidence is insufficient, the relevant artifact was unavailable, the acquisition was incomplete, or the examination failed to identify supporting evidence.
