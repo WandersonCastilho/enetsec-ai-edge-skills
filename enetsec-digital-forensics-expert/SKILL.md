@@ -382,3 +382,176 @@ Write conclusions so they can withstand:
 Avoid advocacy language.
 
 Do not write to win the case. Write to accurately explain what the evidence supports and what it does not.
+
+
+## Evidentiary Confidence Model
+
+For every material forensic finding, assign a conclusion-strength classification based on the quality, provenance, consistency, and corroboration of the evidence.
+
+Use the following categories:
+
+### Observed
+
+Use when the finding is directly present in the examined material but has not yet been independently validated.
+
+Examples:
+
+- a message record is present in a parsed report
+- a timestamp appears in a database field
+- a tool labels an artifact as deleted
+- a file exists at a specified path
+
+Observed does not mean independently verified.
+
+### Corroborated
+
+Use when the same material fact is supported by at least one independent artifact, source, or forensic method.
+
+Examples:
+
+- the same message exists in both the source database and a parsed forensic report
+- a location artifact is supported by both application data and system location records
+- the same timestamp is independently recovered from separate evidence sources
+
+Corroboration increases reliability but does not automatically establish attribution or causation.
+
+### Strongly Supported
+
+Use when multiple independent and technically consistent sources support the same conclusion and no material contradictory evidence has been identified.
+
+Factors may include:
+
+- source artifact validation
+- consistent timestamps
+- matching record identifiers
+- consistent source paths
+- independent tool agreement
+- integrity verification
+- documented acquisition methodology
+- reproducibility
+
+### Established
+
+Use only when the available evidence directly supports the material fact, relevant alternative technical explanations have been reasonably excluded, provenance and integrity are sufficiently documented, and no unresolved material contradiction remains.
+
+Use this classification sparingly.
+
+Do not classify a finding as Established solely because multiple forensic tools display the same parsed artifact. Multiple tools may rely on the same underlying data or similar parsing assumptions.
+
+### Consistent With
+
+Use when the evidence is compatible with a proposed explanation but does not uniquely establish it.
+
+Example:
+
+"The artifacts are consistent with the account having been accessed from the device."
+
+This does not establish who performed the access.
+
+### Suggestive Only
+
+Use when the evidence provides some support for a hypothesis but substantial uncertainty, missing validation, or plausible competing explanations remain.
+
+### Indeterminate
+
+Use when the available evidence is insufficient to reliably choose among competing explanations.
+
+### Contradicted
+
+Use when reliable evidence materially conflicts with the proposed finding or hypothesis.
+
+Do not use Contradicted merely because one forensic tool failed to recover an artifact that another tool recovered.
+
+## Confidence Assessment Factors
+
+Before assigning a conclusion-strength classification, evaluate:
+
+1. Provenance
+   - Is the source artifact identified?
+   - Is its acquisition history known?
+   - Is chain of custody documented?
+
+2. Integrity
+   - Are cryptographic hashes available?
+   - Was integrity verification documented?
+
+3. Source Quality
+   - Is the finding based on primary artifact evidence?
+   - Is it based only on a parser-generated report?
+
+4. Corroboration
+   - Is the finding independently supported?
+   - Are corroborating sources truly independent?
+
+5. Tool Agreement
+   - Do Cellebrite, Magnet AXIOM, Oxygen, IPED, or other tools agree?
+   - Do they rely on the same underlying source?
+
+6. Timestamp Reliability
+   - Is the raw timestamp available?
+   - Is its epoch understood?
+   - Is the timezone documented?
+   - Could conversion or clock offset explain differences?
+
+7. Artifact State
+   - Is the artifact active, deleted, recovered, carved, reconstructed, or inferred?
+
+8. Attribution
+   - Does the evidence establish device, account, application, network, or human attribution?
+
+9. Alternative Explanations
+   - Are there technically plausible competing explanations?
+   - Have they been tested?
+
+10. Completeness
+   - Is the acquisition sufficiently complete for the conclusion being made?
+
+11. Contradictions
+   - Is there unresolved conflicting evidence?
+
+12. Reproducibility
+   - Could another qualified examiner reproduce the finding from the documented evidence and methodology?
+
+## No Arbitrary Percentages
+
+Do not assign numerical confidence percentages such as 85%, 95%, or 99% unless a validated statistical or probabilistic methodology specifically supports that number.
+
+Forensic confidence classifications are qualitative unless a legitimate quantitative model exists.
+
+Do not use fabricated precision.
+
+## Finding Matrix
+
+When requested, summarize important findings using this structure:
+
+| Finding | Evidence Source | Validation | Corroboration | Limitations | Classification |
+| --- | --- | --- | --- | --- | --- |
+| Material finding | Source artifact/report | Validation performed | Independent support | Relevant uncertainty | Confidence category |
+
+Do not elevate a classification merely because the same information appears repeatedly in a report.
+
+## Conflict Rule
+
+When evidence supports different classifications, use the weakest classification justified by the unresolved material issue.
+
+Example:
+
+If a message is present in a validated database and corroborated by a second tool, but human authorship cannot be established, the existence of the message may be Strongly Supported while authorship remains Indeterminate.
+
+Classify each proposition separately.
+
+## Proposition-Level Reasoning
+
+Do not assign one confidence classification to an entire case.
+
+Break conclusions into distinct propositions.
+
+For example:
+
+- "The message record existed on the device." — Strongly Supported
+- "The message was sent at 18:17 local time." — Indeterminate
+- "The account owner personally typed the message." — Indeterminate
+- "The record was marked deleted by the parser." — Observed
+- "The user intentionally deleted the message." — Suggestive Only or Indeterminate
+
+The confidence classification must match the exact proposition being evaluated.
