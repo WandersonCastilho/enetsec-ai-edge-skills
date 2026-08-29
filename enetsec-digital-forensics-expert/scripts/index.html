@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enetsec Forensic Utilities</title>
+</head>
+<body>
+<script>
+function isoFromUnix(value, unit) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) throw new Error("Invalid numeric timestamp.");
+
+  let ms;
+  if (unit === "seconds") ms = n * 1000;
+  else if (unit === "milliseconds") ms = n;
+  else throw new Error("unit must be seconds or milliseconds.");
+
+  return new Date(ms).toISOString();
+}
+
+function isoFromApple(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) throw new Error("Invalid Apple timestamp.");
+
+  const appleEpochMs = Date.UTC(2001, 0, 1, 0, 0, 0);
+  return new Date(appleEpochMs + (n * 1000)).toISOString();
+}
+
+function isoFromWebkit(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) throw new Error("Invalid WebKit timestamp.");
+
+  const unixEpochFrom1601Microseconds = 11644473600000000;
+  const unixMicroseconds = n - unixEpochFrom1601Microseconds;
+
+  return new Date(unixMicroseconds / 1000).toISOString();
+}
+
+function isoFromFiletime(value) {
+  const n = BigInt(String(value));
+  const unixEpochOffset = 116444736000000000n;
+  const unix100ns = n - unixEpochOffset;
+  const unixMs = unix100ns / 10000n;
+
+  return new Date(Number(unixMs)).toISOString();
+}
+
+function compareHashes(a, b) {
+  const cleanA = String(a || "").trim().toLowerCase();
+  const cleanB = String(b || "").trim().toLowerCase();
+
+  if (!cleanA || !cleanB) throw new Error("Both hashes are required.");
+
+  return {
+    match: cleanA === cleanB,
+    hash1: cleanA,
+    hash2: cleanB
+  };
+}
+
+function normalizeGps(latitude, longitude) {
+  const lat = Number(latitude);
+  const lon = Number(longitude);
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+    throw new Error("Latitude and longitude must be numeric.");
+  }
+
+  if (lat < -90 || lat > 90) throw new Error("Latitude out of range.");
+  if (lon < -180 || lon > 180) throw new Error("Longitude out of range.");
+
+  return {
+    latitude: lat,
+    longitude: lon,
+    google_maps_query: `${lat},${lon}`
+  };
+}
+
+function compareArtifacts(items) {
+  if (!Array.isArray(items) || items.length < 2) {
+    throw new Error("At least two artifacts are required.");
+  }
+
+  const fields = [
+    "tool",
+    "source_path",
+    "timestamp",
+    "record_id",
+    "content",
+    "deletion_status"
+  ];
+
+  const normalized = items.map((item, index) => {
+    const out = { index };
+    for (const field of fields) {
+      out[field] = item[field] ?? null;
+    }
+    return out;
+  });
+
+  const differences = [];
+
+  for (const field of fields.filter(f => f !== "tool")) {
+    const values = normalized.map(x => JSON.stringify(x[field]));
+    const unique = [...new Set(values)];
+
+    if (unique.length > 1) {
+      differences.push({
+        field,
+        values: normalized.map(x => ({
+          tool: x.tool,
+          value: x[field]
+        }))
+      });
+    }
+  }
+
+  return {
+    artifacts: normalized,
+    differences,
+    consistent: differences.length === 0
+  };
+}
+
+function evidenceChecklist(data) {
+  const required = [
+    "device_identification",
+    "acquisition_date_time",
+    "examiner",
+    "tool_name",
+    "tool_version",
+    "acquisition_method",
+    "hashes",
+    "timezone",
+    "acquisition_logs",
+    "processing_logs",
+    "chain_of_custody"
+  ];
+
+  const present = [];
+  const missing = [];
+
+  for (const field of required) {
+    const value = data[field];
+
+    const exists =
+      value !== undefined &&
+      value !== null &&
+      value !== "" &&
+      !(Array.isArray(value) && value.length === 0);
+
+    (exists ? present : missing).push(field);
+  }
+
+  return {
+    present,
+    missing,
+    completeness_percent: Math.round((present.length / required.length) * 100)
+  };
+}
+
+window["ai_edge_gallery_get_result"] = async (data) => {
+  try {
+    const input = JSON.parse(data);
+    const operation = input.operation;
+
+    let result;
+
+    switch (operation) {
+      case "unix_timestamp":
+        result = {
+          input: input.value,
+          unit: input.unit,
+          iso_utc: isoFromUnix(input.value, input.unit)
+        };
+        break;
+
+      case "apple_timestamp":
+        result = {
+          input: input.value,
+          epoch: "2001-01-01T00:00:00Z",
+          iso_utc: isoFromApple(input.value)
+        };
+        break;
+
+      case "webkit_timestamp":
+        result = {
+          input: input.value,
+          unit: "microseconds since 1601-01-01",
+          iso_utc: isoFromWebkit(input.value)
+        };
+        break;
+
+      case "filetime":
+        result = {
+          input: input.value,
+          unit: "100-nanosecond intervals since 1601-01-01",
+          iso_utc: isoFromFiletime(input.value)
+        };
+        break;
+
+      case "compare_hashes":
+        result = compareHashes(input.hash1, input.hash2);
+        break;
+
+      case "normalize_gps":
+        result = normalizeGps(input.latitude, input.longitude);
+        break;
+
+      case "compare_artifacts":
+        result = compareArtifacts(input.artifacts);
+        break;
+
+      case "evidence_checklist":
+        result = evidenceChecklist(input);
+        break;
+
+      default:
+        throw new Error(
+          "Unsupported operation. Use unix_timestamp, apple_timestamp, webkit_timestamp, filetime, compare_hashes, normalize_gps, compare_artifacts, or evidence_checklist."
+        );
+    }
+
+    return JSON.stringify({ result });
+  } catch (e) {
+    console.error(e);
+
+    return JSON.stringify({
+      error: `Forensic utility failed: ${e.message}`
+    });
+  }
+};
+</script>
+</body>
+</html>
