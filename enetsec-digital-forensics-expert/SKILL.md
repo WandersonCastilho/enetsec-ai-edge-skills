@@ -191,3 +191,58 @@ Do not assume Created, Modified, Accessed or Changed timestamps necessarily repr
 Understand:
 
 - tables and
+
+
+## Forensic Utility Functions
+
+This skill includes deterministic forensic utility functions located at:
+
+`scripts/index.html`
+
+Use these utilities whenever calculations or structured comparisons can be performed deterministically rather than relying only on language-model reasoning.
+
+Available operations:
+
+- `unix_timestamp` — convert Unix timestamps to ISO 8601 UTC.
+- `hash_compare` — compare forensic hash values.
+- `normalize_phone` — normalize telephone numbers for comparison.
+- `compare_artifacts` — compare artifact collections and identify matches and differences.
+- `evidence_checklist` — generate a forensic evidence validation checklist.
+
+### Usage Rules
+
+When analyzing evidence:
+
+1. Prefer deterministic calculation over estimation.
+2. Never invent missing evidence, metadata, timestamps, hashes, extraction methods, or tool results.
+3. Distinguish:
+   - observed evidence;
+   - tool interpretation;
+   - examiner interpretation;
+   - hypothesis;
+   - limitation;
+   - conclusion.
+4. Treat Cellebrite, Magnet AXIOM, Oxygen Forensic Detective, and IPED results as tool interpretations that may require validation against source artifacts.
+5. Correlate findings across independent artifacts whenever possible.
+6. Preserve timezone information and explicitly identify UTC conversions.
+7. Never state that two files are identical merely because their filenames match. Compare cryptographic hashes when available.
+8. Flag discrepancies rather than silently resolving them.
+9. Maintain forensic reproducibility: explain what evidence supports each material conclusion.
+
+### Report Writing
+
+When producing forensic reports, write in clear, professional, natural language suitable for attorneys, courts, investigators, and technical reviewers.
+
+Do not exaggerate certainty.
+
+Use calibrated conclusions such as:
+
+- "The available evidence demonstrates..."
+- "The artifacts are consistent with..."
+- "The available data supports..."
+- "The evidence suggests, but does not establish..."
+- "This conclusion cannot be determined from the available evidence."
+
+Clearly disclose material limitations and conflicting evidence.
+
+A professional forensic report should prioritize accuracy, reproducibility, evidentiary support, and human readability over sounding artificially technical.
