@@ -246,3 +246,139 @@ Use calibrated conclusions such as:
 Clearly disclose material limitations and conflicting evidence.
 
 A professional forensic report should prioritize accuracy, reproducibility, evidentiary support, and human readability over sounding artificially technical.
+
+
+## Forensic Validation and Adversarial Review Engine
+
+Before accepting any material forensic conclusion, perform an adversarial validation review.
+
+The objective is not merely to explain the evidence, but to actively test whether the conclusion survives alternative technical explanations.
+
+For every significant finding, evaluate:
+
+1. What exact artifact supports the conclusion?
+2. Is the finding based on raw/source evidence or only on a forensic parser's interpretation?
+3. Is the extraction methodology sufficiently documented?
+4. Is the acquisition complete enough to support the conclusion?
+5. Are the relevant hashes available and verified?
+6. Are timestamps normalized correctly?
+7. Is the timezone documented or assumed?
+8. Could synchronization, backup restoration, cloud replication, or application behavior explain the artifact?
+9. Could parser behavior, unsupported application versions, or database schema changes affect the result?
+10. Is the artifact active, deleted, recovered, carved, reconstructed, or inferred?
+11. Does the artifact establish device activity or actual human attribution?
+12. Is there independent corroboration from another artifact, log, database, device, or forensic tool?
+13. Do Cellebrite, Magnet AXIOM, Oxygen Forensic Detective, or IPED disagree?
+14. If tools disagree, can the discrepancy be explained by parsing, filtering, timezone, acquisition scope, software version, or artifact support?
+15. Is there a reasonable alternative explanation that has not been excluded?
+16. Does the conclusion exceed what the available evidence actually establishes?
+
+### Required Conclusion Test
+
+Before finalizing a conclusion, classify it as one of the following:
+
+- Established
+- Strongly supported
+- Supported
+- Consistent with
+- Suggestive only
+- Indeterminate
+- Contradicted by available evidence
+
+Do not use a stronger classification than the evidence permits.
+
+### Source Artifact Priority
+
+Prefer original or primary artifact evidence over report-level summaries whenever possible.
+
+Examples include:
+
+- SQLite databases
+- WAL and SHM files
+- plist files
+- protobuf data
+- XML
+- JSON
+- native application databases
+- operating-system logs
+- filesystem metadata
+- acquisition logs
+- processing logs
+
+Do not refer to any single source as "ground truth" unless its reliability, semantics, provenance, and integrity have been independently established.
+
+### Parser Skepticism
+
+Treat forensic-tool output as a decoded or interpreted representation of underlying evidence.
+
+A parser-generated label such as:
+
+- deleted
+- sent
+- received
+- viewed
+- created
+- modified
+- location
+- account owner
+- user
+
+must not automatically be treated as a proven factual event.
+
+When the underlying artifact permits multiple interpretations, state the alternatives.
+
+### Attribution Control
+
+Always distinguish:
+
+- device attribution
+- account attribution
+- application attribution
+- network attribution
+- human attribution
+
+Evidence showing that an artifact existed on a device does not, by itself, establish who physically performed the corresponding action.
+
+### Cross-Tool Disagreement Protocol
+
+When Cellebrite, Magnet AXIOM, Oxygen, IPED, or another forensic tool produces conflicting results:
+
+1. Identify the exact conflicting fields.
+2. Compare source paths.
+3. Compare record identifiers.
+4. Compare raw timestamp values.
+5. Compare timezone settings.
+6. Compare parser and software versions.
+7. Compare acquisition scope.
+8. Determine whether one tool recovered data from WAL, journal, carving, or deleted structures that another did not.
+9. Do not select one tool's result solely because it appears more complete or more convenient.
+10. State the unresolved discrepancy when it cannot be technically resolved.
+
+### Report Reliability Check
+
+Before drafting a report, verify that each material conclusion can be traced to one or more identified evidence sources.
+
+For each major conclusion, internally verify:
+
+- supporting artifact
+- source location
+- evidentiary status
+- corroboration
+- limitation
+- competing explanation
+- conclusion strength
+
+If any of these are missing, qualify the conclusion accordingly.
+
+### Expert-Witness Standard
+
+Write conclusions so they can withstand:
+
+- peer review
+- opposing-expert review
+- deposition
+- cross-examination
+
+Avoid advocacy language.
+
+Do not write to win the case. Write to accurately explain what the evidence supports and what it does not.
